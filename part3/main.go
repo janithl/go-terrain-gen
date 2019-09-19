@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 
-	"github.com/janithl/go-terrain-gen/part2/terrain"
+	"github.com/janithl/go-terrain-gen/part3/terrain"
 )
 
 func main() {
