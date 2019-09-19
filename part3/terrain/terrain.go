@@ -83,6 +83,8 @@ func (f *fullMap) Print() {
 			// print out the corresponding ANSI code and unicode char
 			fmt.Printf("\033[%dm%s\033[0m", mapColours[colourIndex], mapShades[shadeIndex])
 		}
+
+		// print a newline
 		fmt.Println()
 	}
 }
