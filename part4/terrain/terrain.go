@@ -4,32 +4,63 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"os/exec"
 	"time"
 )
 
+func min(x, y int) int {
+	if x < y {
+		return x
+	}
+	return y
+}
+
+func max(x, y int) int {
+	if x > y {
+		return x
+	}
+	return y
+}
+
 type fullMap struct {
-	width, height, elevation, peakProbability int
-	elements                                  [][]int
+	width, height, elevation, peakProbability, cliffProbability int
+	elements                                                    [][]int
 }
 
 // NewFullMap returns a new terrain map
-func NewFullMap(width, height, elevation, peakProbability int) fullMap {
+func NewFullMap(width, height, elevation, peakProbability, cliffProbability int) fullMap {
 	elements := make([][]int, height)
 	for i := 0; i < height; i++ {
 		elements[i] = make([]int, width)
 	}
 
 	return fullMap{
-		width:           width,
-		height:          height,
-		elevation:       elevation,
-		peakProbability: peakProbability,
-		elements:        elements,
+		width:            width,
+		height:           height,
+		elevation:        elevation,
+		peakProbability:  peakProbability,
+		cliffProbability: cliffProbability,
+		elements:         elements,
 	}
 }
 
+// adjacentElevation checks if an adjacent element
+// to the given element (h, w) is at a given elevation
+func (f *fullMap) adjacentElevation(h, w, elevation int) bool {
+	for y := max(0, h-1); y <= min(f.height-1, h+1); y++ {
+		for x := max(0, w-1); x <= min(f.width-1, w+1); x++ {
+			if f.elements[y][x] == elevation+1 {
+				// if this element is *not* randomly a cliff, return true
+				return rand.Intn(100) > f.cliffProbability
+			}
+		}
+	}
+
+	return false
+}
+
 // Generate generates the terrain map
-func (f *fullMap) Generate() {
+func (f *fullMap) Generate(viewSteps bool) {
 	// rand needs to be seeded, so we set the current
 	// nanosecond timestamp as the seed
 	rand.Seed(time.Now().UnixNano())
@@ -43,11 +74,22 @@ func (f *fullMap) Generate() {
 					continue
 				}
 
-				// if the random value meets our criteria, it's a peak
-				if rand.Intn(100) < f.peakProbability {
+				// if the element is next to a element with elevation x, it
+				// should get elevation x - 1
+				// alternately, if the random value meets our criteria, it's a peak
+				if f.adjacentElevation(h, w, e) || rand.Intn(100) < f.peakProbability {
 					f.elements[h][w] = e
 				}
 			}
+		}
+
+		// if viewSteps is true, we print every step of the generation process,
+		// sleep for a second, and clear the screen for the next step
+		if viewSteps {
+			f.Print()
+			time.Sleep(time.Second)
+			exec.Command("clear")
+			fmt.Println()
 		}
 	}
 }
