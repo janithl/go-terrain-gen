@@ -1,6 +1,7 @@
 # A basic terrain generator in Go (Part 4)
 
-Added colours and shading to output of map to terminal
+Explore how to assign values to adjacent map elements, introduce
+randomness in the form of cliff probability
 
 ---
 

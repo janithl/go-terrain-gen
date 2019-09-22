@@ -1,6 +1,7 @@
 # A basic terrain generator in Go (Part 2)
 
-Refactored the code and added CLI flags
+Refactor the Go code into using structs and methods to make adding features
+easier, and add CLI flags to control variables such as map size
 
 ---
 

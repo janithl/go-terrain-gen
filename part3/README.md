@@ -1,6 +1,7 @@
 # A basic terrain generator in Go (Part 3)
 
-Added colours and shading to output of map to terminal
+Better map visualisation: Added colours and shading to output
+of map to terminal
 
 ---
 
